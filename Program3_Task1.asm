@@ -13,8 +13,8 @@
 # - a separate case for grades above 100 (i.e. prints out "A with Extra Credit")
 # - your name printed out after all the grades are read (and before the program exits)
 
+#print corresponding letter grade
 .macro letterGrade(%x)
-	#print letter grade A
 	li $v0, 4
 	la $a0, %x
 	syscall
@@ -26,11 +26,19 @@
 	j increment
 .end_macro 
 
+# display specified prompt to user 
+.macro display(%x)
+	li $v0, 4
+	la $a0, %x
+	syscall 
+.end_macro 
+
 .data
 intScores: .word 32, 56, 78, 66, 88, 90, 93, 100, 101, 82
 prompt1: .asciiz "The grade for "
 prompt2: .asciiz " is: "
 separatorLine: .asciiz "\n"
+userGrade: .asciiz "The grade is: "
 exitPrompt: .asciiz "The program will now exit."
 
 #letter grade values for user display
@@ -54,9 +62,7 @@ displayInt:
 	lw $t0, 0($s0)
 	
 	#display prompt1 to user 
-	li $v0, 4
-	la $a0, prompt1
-	syscall 
+	display(prompt1)
 	
 	#print $t0 to user (current element) 
 	li $v0, 1
@@ -64,17 +70,15 @@ displayInt:
 	syscall 
 	
 	#display prompt2 to user 
-	li $v0, 4
-	la $a0, prompt2
-	syscall 
-
+	display(prompt2)
+	
 	#jump to specific label based on score
 	ble $t0, 59, gradeF
 	ble $t0, 69, gradeD
 	ble $t0, 79, gradeC
 	ble $t0, 89, gradeB
 	ble $t0, 100, gradeA
-	ble $10, 1000, extraCredit
+	ble $10, 10000, extraCredit
 	
 	j increment
 	
@@ -116,9 +120,7 @@ gradeF:
 
 exit:
 	#display exitPrompt to user 
-	li $v0, 4
-	la $a0, exitPrompt
-	syscall 
+	display(exitPrompt) 
 	
 	#exit program
      	li $v0, 10
