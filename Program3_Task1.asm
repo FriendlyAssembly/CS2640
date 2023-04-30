@@ -13,6 +13,19 @@
 # - a separate case for grades above 100 (i.e. prints out "A with Extra Credit")
 # - your name printed out after all the grades are read (and before the program exits)
 
+.macro letterGrade(%x)
+	#print letter grade A
+	li $v0, 4
+	la $a0, %x
+	syscall
+	
+	li $v0, 4
+	la $a0, separatorLine
+	syscall
+	
+	j increment
+.end_macro 
+
 .data
 intScores: .word 32, 56, 78, 66, 88, 90, 93, 100, 101, 82
 prompt1: .asciiz "The grade for "
@@ -79,76 +92,28 @@ increment:
 	j displayInt
 	
 extraCredit:
-	#print letter grade A
-	li $v0, 4
-	la $a0, extraCreditA
-	syscall
-	
-	li $v0, 4
-	la $a0, separatorLine
-	syscall
-	
-	j increment
+	#print letter grade A with extra credit
+	letterGrade(extraCreditA)
 	
 gradeA:
 	#print letter grade A
-	li $v0, 4
-	la $a0, letterA
-	syscall
-	
-	li $v0, 4
-	la $a0, separatorLine
-	syscall
-	
-	j increment
+	letterGrade(letterA)
 	
 gradeB:
 	#print letter grade B
-	li $v0, 4
-	la $a0, letterB
-	syscall
-	
-	li $v0, 4
-	la $a0, separatorLine
-	syscall
-	
-	j increment
+	letterGrade(letterB)
 	
 gradeC:
 	#print letter grade C
-	li $v0, 4
-	la $a0, letterC
-	syscall
-	
-	li $v0, 4
-	la $a0, separatorLine
-	syscall
-	
-	j increment
+	letterGrade(letterC)
 	
 gradeD:
 	#print letter grade D
-	li $v0, 4
-	la $a0, letterD
-	syscall
-	
-	li $v0, 4
-	la $a0, separatorLine
-	syscall
-	
-	j increment
+	letterGrade(letterD)
 	
 gradeF:
 	#print letter grade F
-	li $v0, 4
-	la $a0, letterF
-	syscall
-	
-	li $v0, 4
-	la $a0, separatorLine
-	syscall
-	
-	j increment
+	letterGrade(letterF)
 
 exit:
 	#display exitPrompt to user 
