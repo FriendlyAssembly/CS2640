@@ -31,7 +31,6 @@ intScores: .word 32, 56, 78, 66, 88, 90, 93, 100, 101, 82
 prompt1: .asciiz "The grade for "
 prompt2: .asciiz " is: "
 separatorLine: .asciiz "\n"
-userGrade: .asciiz "The grade is: "
 exitPrompt: .asciiz "The program will now exit."
 
 #letter grade values for user display
