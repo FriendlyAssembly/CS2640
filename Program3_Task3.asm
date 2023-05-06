@@ -1,4 +1,4 @@
-#CS2640.01 : Dayoung Kim
+#Friendly Assembly: CS2640.01
 #Append to File
 #still issues with generating files...
 
