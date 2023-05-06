@@ -1,4 +1,4 @@
-# CS2640.01 : FridnelyAssembly
+# FridnelyAssembly: CS2640
 # May 7, 2023
 # Objective : Write a program in Assembly that takes practiceFile.txt file and appends to it
 # - For the extra point, file name and content is taken from user input (+1 point)
