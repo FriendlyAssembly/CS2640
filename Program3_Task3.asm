@@ -1,61 +1,65 @@
-#Friendly Assembly: CS2640.01
-#Append to File
-#still issues with generating files...
+# CS2640.01 : FridnelyAssembly
+# May 7, 2023
+# Objective : Write a program in Assembly that takes practiceFile.txt file and appends to it
+# - For the extra point, file name and content is taken from user input (+1 point)
+# - Ask user to enter the file name and read the input
+# - Store the file name and contents entered by user
+# - Open the specified file in writing mode
+# - Append the file to the user
 
 .data
 filename: .space 256     # Space for the file name
 filecontent: .space 1024 # Space for the file content
 filenameMsg: .asciiz "Please enter the file name that you wish to create: "
-filecontentMsg: .asciiz "Please enter the file content that you wish to create: "
-# Read filename from user
+filecontentMsg: .asciiz "Please enter the file content that you wish to create: " 
 
 .text
 main:
    
-    # File name message
+    # show file name message
     li $v0, 4
     la $a0, filenameMsg
     syscall
     
-    # Read filename from user
-    li $v0, 8              # Set syscall code for reading string
-    la $a0, filename       # Load address of filename buffer
-    li $a1, 256            # Set buffer size
-    syscall                # Read filename
+    # read filename from user
+    li $v0, 8             
+    la $a0, filename       #load address of filename buffer
+    li $a1, 256            #buffer size
+    syscall                
 
-    # File contents message
+    # show file contents message
     li $v0, 4
     la $a0, filecontentMsg
     syscall
 
-    # Read file content from user
-    li $v0, 8              # Set syscall code for reading string
-    la $a0, filecontent    # Load address of filecontent buffer
-    li $a1, 1024           # Set buffer size
-    syscall                # Read file content
+    # read file content from user
+    li $v0, 8             
+    la $a0, filecontent    #load address of filecontent buffer
+    li $a1, 1024           #buffer size
+    syscall          
 
-    # Open file in append mode
-    li $v0, 13             # Set syscall code for opening file
-    la $a0, filename       # Load address of filename buffer
-    li $a1, 1              # Set file opening mode to write (1 for O_WRONLY)
-    li $a2, 8              # Set flags to O_APPEND (8)
-    syscall                # Open file
+    # open file in writing mode
+    li $v0, 13            
+    la $a0, filename       #load address of filename buffer
+    li $a1, 1              #flag 1 : writing with creating
+    li $a2, 0              #mode : ignored
+    syscall              
 
-    # Store file descriptor
-    move $s0, $v0          # Move file descriptor to $s0 for later use
+    # store file descriptor
+    move $s0, $v0          #$s0 for later use
 
-    # Write content to file
-    li $v0, 15             # Set syscall code for writing to file
-    move $a0, $s0          # Move file descriptor to $a0
-    la $a1, filecontent    # Load address of filecontent buffer
-    li $a2, 1024           # Set buffer size
-    syscall                # Write content to file
+    # write content to file
+    li $v0, 15            
+    move $a0, $s0       
+    la $a1, filecontent    #load address of filecontent buffer
+    li $a2, 1024           #buffer size
+    syscall             
 
     # Close file
-    li $v0, 16             # Set syscall code for closing file
-    move $a0, $s0          # Move file descriptor to $a0
-    syscall                # Close file
+    li $v0, 16          
+    move $a0, $s0       
+    syscall           
 
     # Exit program
-    li $v0, 10             # Set syscall code for exiting program
-    syscall                # Exit
+    li $v0, 10          
+    syscall             
