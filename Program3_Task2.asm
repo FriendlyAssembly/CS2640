@@ -47,18 +47,18 @@ main:
 	# close the file
 	li $v0, 16
 	syscall
+
+exit:
+
+	# exit program
+	li $v0, 10
+	syscall
 	
 notFound:
 
 	# print error message
 	li $v0, 4
 	la $a0, fileNotFound
-	syscall
-
-exit:
-
-	# exit program
-	li $v0, 10
 	syscall
 
 	
