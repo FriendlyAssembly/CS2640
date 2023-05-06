@@ -55,11 +55,11 @@ main:
     li $a2, 1024           #buffer size
     syscall             
 
-    # Close file
+    # close file
     li $v0, 16          
     move $a0, $s0       
     syscall           
 
-    # Exit program
+    # exit program
     li $v0, 10          
     syscall             
