@@ -1,5 +1,9 @@
-# FriendlyAssembly: CS2640
-# Date: 5/7/2023
+# FriendlyAssembly: CS2640.01
+	#Jarisse Escubido
+	#Moller Myint
+	#Dayoung Kim
+	#Vanisa Suadprathon
+# Due Date: 05/07/2023
 # Objective:
 # Write an Assembly program that will return a letter grade for each element in an array 
 # - (e.g. test scores in an array of scores)
