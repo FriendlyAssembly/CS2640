@@ -19,10 +19,6 @@
 	la $a0, %x
 	syscall
 	
-	li $v0, 4
-	la $a0, separatorLine
-	syscall
-	
 	j increment
 .end_macro 
 
@@ -35,10 +31,9 @@
 
 .data
 intScores: .word 32, 56, 78, 66, 88, 90, 93, 100, 101, 82
-prompt1: .asciiz "The grade for "
+prompt1: .asciiz "\nThe grade for "
 prompt2: .asciiz " is: "
-separatorLine: .asciiz "\n"
-exitPrompt: .asciiz "The program will now exit."
+exitPrompt: .asciiz "\nThe program will now exit."
 
 #letter grade values for user display
 letterA: .asciiz "A"
