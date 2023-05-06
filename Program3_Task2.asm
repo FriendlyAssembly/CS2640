@@ -1,5 +1,9 @@
-# FriendlyAssembly: CS2640
-# Date: 5/7/2023
+# FriendlyAssembly: CS2640.01
+	#Jarisse Escubido
+	#Moller Myint
+	#Dayoung Kim
+	#Vanisa Suadprathon
+# Due Date: 05/07/2023
 # Objective : Write a program in Assembly that takes in a programmer-defined filename
 # - Take filename that you want to open from user
 # - Read the filename that you entered
