@@ -33,7 +33,7 @@
 intScores: .word 32, 56, 78, 66, 88, 90, 93, 100, 101, 82
 prompt1: .asciiz "\nThe grade for "
 prompt2: .asciiz " is: "
-exitPrompt: .asciiz "\nThe program will now exit."
+exitPrompt: .asciiz "\nFriendly Assembly\nThe program will now exit."
 
 #letter grade values for user display
 letterA: .asciiz "A"
