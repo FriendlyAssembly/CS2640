@@ -1,5 +1,9 @@
-# FridnelyAssembly: CS2640
-# Date: 5/7/2023
+# FriendlyAssembly: CS2640.01
+	#Jarisse Escubido
+	#Moller Myint
+	#Dayoung Kim
+	#Vanisa Suadprathon
+# Due Date: 05/07/2023
 # Objective : Write a program in Assembly that takes practiceFile.txt file and appends to it
 # - For the extra point, file name and content is taken from user input (+1 point)
 # - Ask user to enter the file name and read the input
