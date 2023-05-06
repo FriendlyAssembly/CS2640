@@ -1,4 +1,4 @@
-# CS2640: FriendlyAssembly
+# FriendlyAssembly: CS2640
 # May 7, 2023
 # Objective : Write a program in Assembly that takes in a programmer-defined filename
 # - Take filename that you want to open from user
@@ -47,7 +47,7 @@ main:
 	# close the file
 	li $v0, 16
 	syscall
-
+	
 exit:
 
 	# exit program
@@ -60,5 +60,6 @@ notFound:
 	li $v0, 4
 	la $a0, fileNotFound
 	syscall
-
 	
+	li $v0, 10
+	syscall
