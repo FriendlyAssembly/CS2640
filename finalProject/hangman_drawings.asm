@@ -83,7 +83,7 @@ sixIncorrect:
     print(" |\n")
     print(" -------")
     
-evenIncorrect:
+sevenIncorrect:
     print("  _______\n")
     print(" |       |\n")
     print(" |       O\n")
