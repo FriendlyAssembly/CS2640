@@ -1,0 +1,117 @@
+# FriendlyAssembly: CS2640
+# Hangman
+
+.data
+
+alphabetChoose: .asciiz "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"
+guess: .asciiz "             "
+
+welcome_line1: .asciiz "  /\\_/\\  \n"
+welcome_line2: .asciiz " / o o \\ \n"
+welcome_line3: .asciiz "(   \"   ) Welcome to our hangman game! We are FriendlyAssembly.\n"
+
+startMsg: .asciiz "\nDo you want to start game? (Y/N) "
+invalindMsg: .asciiz "\n\nPlease enter invalid answer."
+guessWord: .asciiz "\nLet's guess word!\n"
+byeMsg: .asciiz "\n\nOkay, let's play next time! bye!\n"
+
+new_line: .asciiz "\n----------------------------------------------\n"
+
+.macro welcome
+	la $a0, welcome_line1
+	li $v0, 4
+	syscall
+	
+	la $a0, welcome_line2
+	li $v0, 4
+	syscall
+	
+	la $a0, welcome_line3
+	li $v0, 4
+	syscall
+
+.end_macro 
+
+.text
+hello_message:
+
+	welcome
+
+# Program starts
+main:		
+
+# -------------- Set up the stack to allocate space for register values --------------- 
+	addi $sp, $sp, -32 # make 32bytes space
+	sw $ra, 28($sp) # save return address
+	sw $fp, 24($sp) # save the current stack frame pointer
+	add $fp, $sp, 32 # now, set the frame pointer in the current function
+	
+# --------------- registers for game ---------------------------------------------------
+
+	# registers for the game
+	
+	la $t0, alphabetChoose
+	la $t1, guess
+	
+	# call main function
+	
+	jal game_start_msg
+	
+	# back the 32 bytes again and exit
+	
+	lw $ra, 28($sp)
+	lw $fp, 24($sp)
+	addo $sp, $sp, 32
+	jr $ra # retrun where the function was called
+	
+	
+game_start_msg:
+
+	# Ask user for start
+	
+	la $a0, startMsg
+	li $v0, 4
+	syscall
+	
+	li $v0, 12
+	syscall
+	move $t0, $v0
+	
+	#Invalid input check
+	
+	beq $t0, 'Y', game_start
+	beq $t0, 'N', exit
+	
+invalid:
+
+	# Print out invaild input
+	li $v0, 4
+	la $a0, invalindMsg
+	syscall
+	
+	li $v0, 4
+	la $a0, new_line
+	syscall
+	
+	j game_start_msg
+	
+game_start:
+
+	# pirnt out new line
+	li $v0, 4
+	la $a0, new_line
+	syscall
+
+	# Print out word guessing message
+	li $v0, 4
+	la $a0, guessWord
+	syscall
+	
+exit:
+
+	li $v0, 4
+	la $a0, byeMsg
+	syscall
+
+	li $v0, 10
+	syscall
