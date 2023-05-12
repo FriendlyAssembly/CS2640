@@ -14,6 +14,17 @@ guessWord6:		.asciiz "comment"
 guessWord7:		.asciiz "console"
 guessWord8:		.asciiz "pointer"
 
+# Hangman drawing
+
+hangman:
+    .asciiz "        +---+\n"
+    .asciiz "        |   |\n"
+    .asciiz "            |\n"
+    .asciiz "            |\n"
+    .asciiz "            |\n"
+    .asciiz "            |\n"
+    .asciiz "    =========\n"
+
 # Array of pointers to the 'words'
 
 words: .word guessWord1, guessWord2, guessWord3, guessWord4, guessWord5, guessWord6, guessWord7, guessWord8
