@@ -16,7 +16,8 @@ guessWord8:		.asciiz "pointer"
 
 # Hangman drawing
 
-hangman:
+.macro hangman
+
     .asciiz "        +---+\n"
     .asciiz "        |   |\n"
     .asciiz "            |\n"
@@ -24,6 +25,8 @@ hangman:
     .asciiz "            |\n"
     .asciiz "            |\n"
     .asciiz "    =========\n"
+    
+.end_macro
 
 # Array of pointers to the 'words'
 
