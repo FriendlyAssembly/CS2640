@@ -1,0 +1,79 @@
+#Friendly Assembly
+#Objective: Make a Hangman
+
+#you guys probably don't need this but I also wanted to provide some sort of basis for the game hehe
+
+.data
+
+words_list: .asciiz "apple banana orange grapes strawberries blueberries"
+guess_word: .asciiz "Let's play hangman! >.< guess the secret word!"
+
+
+hangman_display1: .asciiz "+---+        \n|        \n|        \n|        \n=="
+hangman_head: .asciiz "\n+---+     \n|   0        \n|          \n|       \n=="
+hangman_body: .asciiz "\n+---+     \n|   0        \n|   |        \n|        \n=="
+hangman_arm1: .asciiz "\n+---+     \n|   0        \n|  /|       \n|        \n=="
+hangman_arm2: .asciiz "\n+---+     \n|   0        \n|  /|\\        \n|        \n=="
+hangman_leg1: .asciiz "\n+---+     \n|   0        \n|  /|\        \n|  /      \n=="
+hangman_leg2: .asciiz "\n+---+     \n|   0        \n|  /|\\        \n|  / \\\       \n=="
+
+.macro display
+	lw $a0, hangman_display
+	beq $a0, 1, head
+	beq $a0, 2, body
+	beq $a0, 3, left_arm
+	beq $a0, 4, right_arm
+	beq $a0, 5, left_leg
+	beq $a0, 6, right_leg
+	
+hangman_display: 
+	la $a0, hangman_display1
+	li $v0, 4 
+	syscall
+	
+head:
+	la $a0, hangman_head
+	li $v0, 4 
+	syscall
+	
+body:
+	la $a0, hangman_body
+	li $v0, 4 
+	syscall
+
+left_arm:
+	la $a0, hangman_arm1
+	li $v0, 4 
+	syscall	
+
+right_arm: 
+
+	la $a0, hangman_arm2
+	li $v0, 4 
+	syscall	
+
+left_leg:
+	la $a0, hangman_leg1
+	li $v0, 4 
+	syscall
+	
+right_leg:
+	la $a0, hangman_leg2
+	li $v0, 4 
+	syscall
+.end_macro
+
+
+.text
+drawing:
+	display
+	
+main:
+    	la $a0, guess_word
+	li $v0, 4 
+	syscall 
+	
+exit:
+    # exit the program
+	li $v0, 10 
+	syscall
