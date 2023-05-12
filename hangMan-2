@@ -1,0 +1,140 @@
+# FriendlyAssembly: CS2640
+# Hangman
+
+.data
+
+# Random word list
+
+guessWord1:		.asciiz	"program"
+guessWord2:		.asciiz	"syscall"
+guessWord3:		.asciiz "control"
+guessWord4:		.asciiz "address"
+guessWord5:		.asciiz "execute"
+guessWord6:		.asciiz "comment"
+guessWord7:		.asciiz "console"
+guessWord8:		.asciiz "pointer"
+
+# Array of pointers to the 'words'
+
+words: .word guessWord1, guessWord2, guessWord3, guessWord4, guessWord5, guessWord6, guessWord7, guessWord8
+num_words: .word 8 # number of the words used for random word from guessWord1 to guessWord8
+
+# Pointer to the selected word
+
+selected_word: .word 0 # hold the word of the address raodomly selected
+
+# game board
+
+game_board : .asciiz " _ _ _ _ _ _ _ "
+
+# Messages
+
+welcome_line: .asciiz "  /\\_/\\  \n / o o \\ \n(   \"   ) Welcome to our hangman game! We are FriendlyAssembly.\n"
+
+startMsg: .asciiz "\nDo you want to start game? (Y/N) "
+invalindMsg: .asciiz "\n\nPlease enter invalid answer."
+guessWord: .asciiz "\nLet's guess word! What would you choose?\n\n*~*~*~ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z ~*~*~*\n"
+byeMsg: .asciiz "\n\nOkay, let's play next time! bye!\n"
+
+new_line: .asciiz "\n----------------------------------------------\n"
+
+.macro welcome
+
+	la $a0, welcome_line
+	li $v0, 4
+	syscall
+
+.end_macro 
+
+.text
+
+hello_message:
+
+	welcome
+
+# Program starts
+main:		
+
+	# Ask user for start
+	
+	la $a0, startMsg
+	li $v0, 4
+	syscall
+	
+	li $v0, 12
+	syscall
+	move $t0, $v0
+	
+	#Invalid input check
+	
+	beq $t0, 'Y', game_start
+	beq $t0, 'N', exit
+	
+invalid:
+
+	# Print out invaild input
+	li $v0, 4
+	la $a0, invalindMsg
+	syscall
+	
+	li $v0, 4
+	la $a0, new_line
+	syscall
+	
+	j main
+	
+game_start:
+
+	# pirnt out new line
+	li $v0, 4
+	la $a0, new_line
+	syscall
+
+	# Print out word guessing message
+	li $v0, 4
+	la $a0, guessWord
+	syscall
+	
+	# Initialization of the game : Generate a random umber between 0 and num_words - 1
+	li $v0, 42 # syscall for random integer
+	lw $a1, num_words # load the number of the word, which is '8'. the value of 8 ar the memory location at the num_words
+	# we will use this when generating one of the random word from array[0] to array[7]
+	move $t0, $v0 # store the random number into $t0 / $t0 contains the offset.
+	
+	# Load the address of the SELECTED word into $a2
+	sll $t0, $t0, 2 # to access to the randomly selected word. one word is occupied with 4 bytes
+	# multiply the value stored in $t0 by 4.
+	# sll is to get current offset (let's say the random number is 2, then it will be 2 * 4 = 8)
+	la $t1, words # load the address of the words array
+	add $t1, $t1, $t0 # add the offset to the base address of the words array
+	lw $a2, 0($t1) # load the selected number REMEMBER it is array!
+	sw $a2, selected_word # store the word intoe the selected_word
+	
+	# Initialization of the game 2 : playing with the selected word
+	la $a1, game_board
+	lw $a2, selected_word
+	# jal setup_game_boad
+	
+	# Print the game board
+	li $v0, 4
+	la $a0, game_board
+	syscall
+	
+	# Read the char from the user
+	li $v0, 12
+	syscall
+	move $t0, $v0
+	
+# loop
+# gameLoop:
+	
+
+# Program ends
+exit:
+
+	li $v0, 4
+	la $a0, byeMsg
+	syscall
+
+	li $v0, 10
+	syscall
