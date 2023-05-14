@@ -1,4 +1,27 @@
+#macro that prints out specified string variable
+.macro printPrompt(%x)
+	li $v0, 4
+	la $a0, %x
+	syscall
+.end_macro 
+
+#macro that prints out specified text
+.macro 	printString (%str)  
 .data
+string:	.asciiz %str
+numIncorrectGuesses: .word 0
+
+.text
+	li $v0, 4
+	la $a0, string
+	syscall
+.end_macro
+
+.data
+totoro: .asciiz "\n                         /\\_/\\  \n                        / o o \\ \n                       (       )\n"
+welcomePrompt: .asciiz "==================Welcome to Hangman!==================\nGuess the secret word before the our cat friend is hung.\n    You have 6 incorrect guesses until Game Over.\n                 Hope you enjoy!\n"
+miniRobots: .asciiz "\n\n\n         \\.-./\n [@@]  __|q p|__  [oo] \n/|__|\\   [===]   /|##|\\ \n d  b     d b     d  b\n"
+
 numIncorrectGuesses: .word 0
 wordLength: .word 0
 numLettersGuessed: .word 0
@@ -7,12 +30,155 @@ prevGuessed: .asciiz "                                    "
 guessedLetters: .asciiz "                          "
 numCorrectGuesses: .word 0
 correctAnswer: .asciiz "\nThe correct word was: "
-.include "hangman_gallows.asm"
-.include "hangman_dictionary.asm"
+file: .asciiz "dictionary.txt"      # filename for input
+buffer: .space 10000
 
 .text
+printImage:	#prints out hangman image for user display 
+.macro print_img
+
+	top:
+		#Unchanging strings
+		printString("\n            		\n")
+		printString("          +-----o		\n")
+		printString("          |     |		\n")
+
+	#Prints different parts of image based on # of incorrect guesses
+	##################################
+		lw $a0, numIncorrectGuesses
+		# 0 incorrect guesses
+		beq $a0, 1, g1
+		beq $a0, 2, g2
+		beq $a0, 3, g3
+		beq $a0, 4, g4
+		beq $a0, 5, g5
+		beq $a0, 6, g6
+		printString("  ^---^   |		\n")  
+		printString(" (o v o)  |		\n")	
+		printString(" (>    )>P|		\n")	
+		printString(" _V___V___|___		\n")	
+		j bottom
+	
+		# 1 incorrect guess
+	g1:	printString("          |    ^-^		\n")
+		printString("   ^---^  |   (0.0)	\n")
+		printString("  (o v o) |		\n")
+		printString("  (>    )>|		\n")
+		printString("  _V___V__|___		\n")
+		j bottom
+	
+		#2 incorrect guesses
+	g2:	printString("   ^---^  |    ^-^		\n")
+		printString("  (o v o) |   (0.0)	\n")
+		printString("  (>    )>|   <   		\n")
+		printString("  _V___V__|___		\n")
+		j bottom
+	
+		#3 incorrect guesses
+	g3:	printString("   ^---^  |    ^-^		\n")
+		printString("  (o v o) |   (0.0)	\n")
+		printString("  (>    )>|   < . >	\n")
+		printString("   V___V__|___		\n")
+		j bottom
+		#4 incorrect guesses
+	g4:	printString("          |    ^-^		\n")
+		printString("   ^---^  |   (0.0)	\n")
+		printString("  (o v o) |   < . >	\n")
+		printString("  (>    )>|    v   	\n")
+		printString("   V___V__|___		\n")
+		j bottom
+	
+		#5 incorrect guesses
+	g5:	printString("          |    ^-^		\n")
+		printString("   ^---^  |   (0.0) 	\n")
+		printString("  (o v o) |   < . >	\n")
+		printString("  (>    )>|    v v		\n")
+		printString("   V___V__|___     	\n")
+		j bottom
+	
+		#6 incorrect guesses
+	g6:	printString("          |    ^-^		\n")
+		printString("   ^---^  |   (x.x)	\n")
+		printString("  (o v o) |   < . >	\n")
+		printString("  (>    )>|    v v		\n")
+		printString("   V___V__|___ 		\n")
+		j bottom
+		
+	bottom:
+		printString("\n")
+
+	#################################
+
+.end_macro
+
+################################################################################################################################################
+welcome:
+	printPrompt(totoro)
+	printPrompt(welcomePrompt)
+
+dictionary:	#open/reads/closes data from dictionary.txt files 
+	#open a file for writing
+	li   $v0, 13		# system call for open file
+	la   $a0, file  	# board file name
+	li   $a1, 0        	# Open for reading
+	li   $a2, 0
+	syscall    
+	        	# open a file (file descriptor returned in $v0)
+	move $s6, $v0     	# save the file descriptor
+
+	#read from file
+	li   $v0, 14       	# system call for read from file
+	move $a0, $s6      	# file descriptor
+	la   $a1, buffer   	# address of buffer to which to read
+	li   $a2, 10000    	# hardcoded buffer length
+	syscall            	# read from file
+
+	# Close the file
+	li   $v0, 16       	# system call for close file
+	move $a0, $s6      	# file descriptor to close
+	syscall            	# close file
+
+	li $v0, 42	   	#system call for printing a string 
+	li $a0, 0		#file descriptor for standard output 
+	li $a1, 10000		#loads 10000 (length of buffer) into $a1
+	syscall
+
+	addi $t0, $a0, 0x10010030	#used to set the starting address for reading the file 
+	li $s1, '\n'			#new line character 
+	li $s2, '\r'			#carriage return character 
+
+#initialize pointer $a0
+	add $a0, $t0, $zero
+
+#find the end of each word by detecting \n or \r
+findNextWord:
+	lb $t1, ($t0)
+	addi $t0, $t0, 1
+	beq $t1, $s1, findWordEnd	#when a \n byte is encountered - word is over
+	j findNextWord
+
+findWordEnd:
+	la $s3, wordToGuess
+	
+findEndLoop:
+	lb $t1, ($t0)
+	addi $t0, $t0, 1		#increment $t0 to point to next byte in memory
+	beq $t1, $s2, newWordFound	#if the end of the word is found (\r) - quit
+	sb $t1, ($s3)
+	addi $s3, $s3, 1		#if the end of the word isn't found, add current byte to wordToGuess
+	j findEndLoop			#repeat until the end of the word is found
+
+newWordFound:
+	printString("\n")
+
+	addi $t0, $t0, 1
+	printPrompt(wordToGuess)	#print wordToGuess for debugging purposes
+
+#=========================================================================================================================================
+#starts actual game procedure 
+	
 main:
-	addi $s3, $zero, 1 #set $s3 to 1 for use later
+	addi $s3, $zero, 1 	#set $s3 to 1 for use later
 	add $s4, $sp, $zero	#sets array up on stack
 	addi $s5, $sp, 4	#sets array pointer
 	la $t0, wordToGuess
@@ -47,21 +213,18 @@ stackSetup:
 	add $sp, $sp, -4	#takes 2 1's off the stack becasue there are 2 too many
 	addi $sp, $sp, 24
 
-	#Word inputed and store in memory; stack set up as array
-	
+	#Word inputed and store in memory; stack set up as array	
 loop:
-	print_str("\n=====================================\n")
+	printString("\n=======================================================\n")
 
 	la $t6, prevGuessed
 	lw $t5, numLettersGuessed
 	add $t4, $zero, $zero
 
 	# Print letters already guessed
-	print_str("Guessed letters: ")
-	li $v0, 4
-	la $a0, guessedLetters
-	syscall
-	#print_str("\n")
+	printString("Guessed letters: ")
+	#printPrompt(guessedLetters)
+	#printString("\n")
 
 	add $s5, $s4, $zero	#set $s5 to beginning of array
 
@@ -69,20 +232,20 @@ loop:
 	jal generateWord
 
 	print_img #sets $a1 to numIncorrectGuesses
-	print_str("\n")
+	printString("\n")
 
 	lw $t3, numIncorrectGuesses
 	beq $t3, 6, failure
 
 	# Print number of incorrect guesses
-	print_str("Incorrect guesses: ")
+	printString("Incorrect guesses: ")
 	li $v0, 1
 	lw $a0, numIncorrectGuesses
 	syscall
-	print_str("\n")
+	printString("\n")
 
 	# Add guessed letter
-	print_str("Guess a letter: ")
+	printString("Guess a letter: ")
 	li $v0, 12
 	syscall	#inputs a character
 	add $s7, $v0, $zero
@@ -93,7 +256,7 @@ loop:
 	beq $v0, 1, loop2 # Continue if the add was valid
 
 	# Otherwise, error
-	print_str("Letter already guessed.\n")
+	printString("Letter already guessed.\n")
 	j loop
 
 loop2:
@@ -168,7 +331,7 @@ generateWord:	#make a word with _ and letters
 	jr $ra
 
 print_:		#if value in array is 1, then an underscore is printed
-	print_str("_ ")
+	printString("_ ")
 	addi $s5, $s5, 4
 	j generateWord
 
@@ -182,7 +345,7 @@ printChar:	#if value in array is 0, then the character from that spot is printed
 	syscall
 
 	addi $s5, $s5, 4
-	print_str(" ")
+	printString(" ")
 	j generateWord
 
 addToStack:
@@ -194,17 +357,17 @@ addToStack:
 	jr $ra
 
 failure: #reached from end of main loop
-	print_str("\nYou have made too many incorrect guesses. Game Over")
+	printString("\nYou have made too many incorrect guesses. Game Over")
 	#insert sound for losing the game
 	j exit
 
 success:	#reached from end of main loop
-	print_str("\nYou have guessed all of the letters in the word. You Win\n")
+	printString("\n\nYou have guessed all of the letters in the word. You Win")
+	printPrompt(miniRobots)
 	#insert sounds for winning the game
 	j exit
 
 soundBad:
-
 	li $v0, 33	#Number for syscall
 	li $a0, 40	#Pitch
 	li $a1, 1000	#Duration
@@ -215,7 +378,6 @@ soundBad:
 	jr $ra
 
 soundGood:
-
 	li $v0, 33	#Number for syscall
 	li $a0, 62	#Pitch
 	li $a1, 250	#Duration
@@ -289,16 +451,12 @@ endAddGuess:
 # END addGuess
 #####
 
-exit:
+exit:	#Exit Program
 	#prints out the correctAnswer prompt
-	li $v0, 4
-	la $a0, correctAnswer
-	syscall
+	printPrompt(correctAnswer)
 	
 	#prints out the correct word
-	li $v0, 4
-	la $a0, wordToGuess
-	syscall
+	printPrompt(wordToGuess)
 
 	li $v0, 10
 	syscall
