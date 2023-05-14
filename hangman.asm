@@ -21,20 +21,21 @@ words: .word word1, word2, word3, word4
 sizeOfWords: .word 4
 
 letterGuess: .asciiz "\n\nEnter a letter: "
-hiddenCharacter: .asciiz "_"
+underscore: .asciiz "_"
 space: .asciiz " "
+newline: .asciiz "\n"
 
 enteredLetters: .asciiz "\nCurrent entered letters: "
 letterBuffer: .space 100
 
 
-initialGuessZero: .asciiz "\n  _______\n |       |\n |\n |\n |\n |\n |\n -------\n"
-incorrectGuessOne: .asciiz "\n  _______\n |       |\n |       O\n |\n |\n |\n |\n -------\n"
-incorrectGuessTwo: .asciiz "\n  _______\n |       |\n |       O\n |       |\n |\n |\n |\n -------\n"
-incorrectGuessThree: .asciiz "\n  _______\n |       |\n |       O\n |      /|\n |\n |\n |\n -------\n"
-incorrectGuessFour: .asciiz "\n  _______\n |       |\n |       O\n |      /|\\\n |\n |\n |\n -------\n"
-incorrectGuessFive: .asciiz "\n  _______\n |       |\n |       O\n |      /|\\\n |      /\n |\n |\n -------\n"
-incorrectGuessSix: .asciiz "\n  _______\n |       |\n |       O\n |      /|\\\n |      d b\n |\n |\n -------\n"
+initialGuessZero: .asciiz "\n  _______\n |       |\n |\n |\n |\n |\n |\n -------\n\n"
+incorrectGuessOne: .asciiz "\n  _______\n |       |\n |       O\n |\n |\n |\n |\n -------\n\n"
+incorrectGuessTwo: .asciiz "\n  _______\n |       |\n |       O\n |       |\n |\n |\n |\n -------\n\n"
+incorrectGuessThree: .asciiz "\n  _______\n |       |\n |       O\n |      /|\n |\n |\n |\n -------\n\n"
+incorrectGuessFour: .asciiz "\n  _______\n |       |\n |       O\n |      /|\\\n |\n |\n |\n -------\n\n"
+incorrectGuessFive: .asciiz "\n  _______\n |       |\n |       O\n |      /|\\\n |      /\n |\n |\n -------\n\n"
+incorrectGuessSix: .asciiz "\n  _______\n |       |\n |       O\n |      /|\\\n |      d b\n |\n |\n -------\n\n"
 incorrectGuesses: .word 0
 
 filename: .asciiz "assemblyWords.txt"
@@ -42,6 +43,15 @@ textBuffer: .space 1045
 
 .text
 main:
+	la $t0, words
+	lw $t1, 16($t0)  # load the length of the array into $t1
+	subi $t1, $t1, 1  # decrement the length of the array by 1 to get the last index
+	
+	li $v0, 40    # load the syscall number for generating a random integer
+	move $v0, $t1  # set $a0 to the upper bound (the last index of the array)
+	syscall       # generate a random integer between 0 and the last index of the array, and store it in $v0
+	add $t2, $t2, $t0   # add the byte offset to the base address of the array to get the address of the random word
+	
 	li $v0, 4
 	la $a0, totoro
 	syscall
@@ -56,17 +66,18 @@ main:
 	la $a0, newGameMessage
 	syscall
 	
-
-
-guessWord:
 	#get user input
 	li $v0, 12
 	syscall
-	move $t0, $v0
+	move $t4, $v0
 	
-	beq $t0, 'Y', startGame
-	beq $t0, 'N', exit
+	#print newline
+	li $v0, 4
+	la $a0, newline
+	syscall
 	
+	beq $t4, 'Y', startGame
+	beq $t4, 'N', exit	
 	
 invalidInput:
 	#print invalid message
@@ -82,11 +93,33 @@ startGame:
 	la $a0, initialGuessZero
 	syscall
 	
-	#print alphabet
+loop:
+        lw $t3, ($t2)  # load the current character into $t3
+        
+        li $v0, 4     # load the syscall number for printing a character
+        la $a0, underscore  # load the address of the underscore character into $a0
+        syscall
+        
+        addi $t2, $t2, 4  # increment the pointer to the next character in the word
+        
+        beq $t3, $zero, startGuess  # if the current character is null, start guessing label
+        	
+        li $v0, 4
+        la $a0, space
+        syscall
+        
+        j loop          # jump back to the beginning of the loop
+	
+startGuess:
+	#print guess prompt
 	li $v0, 4
-	la $a0, enteredLetters
+	la $a0, letterGuess
 	syscall
 	
+	#get input
+	li $v0, 12
+	syscall
+	move $t5, $v0
 	
 	
 exit:
