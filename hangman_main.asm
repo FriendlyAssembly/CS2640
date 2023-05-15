@@ -19,7 +19,7 @@ numIncorrectGuesses: .word 0
 
 .data
 totoro: .asciiz "\n                         /\\_/\\  \n                        / o o \\ \n                       (       )\n"
-welcomePrompt: .asciiz "==================Welcome to Hangman!==================\nGuess the secret word before the our cat friend is hung!\n    You have 6 incorrect guesses until Game Over.\n                 Hope you enjoy!\n"
+welcomePrompt: .asciiz "==================Welcome to Hangcat!==================\nGuess the secret word before the our cat friend is hung!\n    You have 6 incorrect guesses until Game Over.\n                 Hope you enjoy!\n"
 miniRobots: .asciiz "\n\n\n         \\.-./\n [@@]  __|q p|__  [oo] \n/|__|\\   [===]   /|##|\\ \n d  b     d b     d  b\n"
 
 numIncorrectGuesses: .word 0
@@ -34,6 +34,9 @@ file: .asciiz "dictionary.txt"      # filename for input
 buffer: .space 10000
 
 .text
+#################################################################################################################################################################
+#																				#
+############################################################### BEGIN HANGCAT IMAGE PRINTING ####################################################################
 printImage:	#prints out hangman image for user display 
 .macro print_img
 
@@ -111,7 +114,7 @@ printImage:	#prints out hangman image for user display
 
 .end_macro
 
-#################################################################### END HANGMAN IMAGE PRINTING #########################################################################
+#################################################################### END HANGCAT IMAGE PRINTING #########################################################################
 #																					#
 ####################################################################### WELCOME PROMPT ##################################################################################
 welcome:
