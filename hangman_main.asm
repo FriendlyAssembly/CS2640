@@ -181,7 +181,7 @@ newWordFound:
 	addi $t0, $t0, 1
 	printPrompt(wordToGuess)	#print wordToGuess for debugging purposes
 
-####################################################################### END DICTIONARY STUFF ##############################################################################
+#################################################################### END DICTIONARY OPERATIONS ############################################################################
 #																					  #
 #################################################################### BEGIN MAIN GAME PROCEDURE ############################################################################
 
@@ -215,7 +215,7 @@ main:
 
 ###########################################################################################################################################################################
 #																					  #
-################################################################## BEGIN LOAD CHARS OF WORDTOGUESS ONTO STACK #############################################################
+################################################################## BEGIN BEGIN INITIALIZING STACK #########################################################################
 
 #adds each character onto the stack 
 stackSetup:
@@ -231,7 +231,7 @@ stackSetup:
 
 	#Word inputed and store in memory; stack set up as array	
 	
-################################################################ END LOAD CHARS OF WORDTOGUESS ONTO STACK #################################################################
+################################################################ END INITIALIZING STACK ###################################################################################
 #																					  #
 ######################################################### BEGIN LOAD CHARS OF PREVIOUSLY GUESSES LETTERS ONTO STACK #######################################################
 loop:
@@ -364,9 +364,16 @@ incrementGuessesNum:
 	sw $t3, numIncorrectGuesses		#stores the updated value in numIncorrectGuesses
 	j soundBad				#play sound for incorrect guess
 	#jr $ra
+	
+######################################################### END LOAD CHARS OF PREVIOUSLY GUESSES LETTERS ONTO STACK #########################################################
+#																					  #
+############################################################## BEGIN LOAD CHARS OF WORD TO GUESS ONTO STACK ###############################################################
 
 #make a word with _ and letters
 #generates a string that shows the current state of the word being guessed
+#$s6- value of the current character in the word to guess
+#$s3- value 95, which corresponds to the ASCII code for the underscore character ()
+#$s2- value 32, which corresponds to the ASCII code for the space character
 generateWord:				
 	lb $s6, 4($s5)				#loads the value at memory location 4($s5) into $s6
 	beq $s6, $s3, print_
@@ -376,31 +383,31 @@ generateWord:
 #if value in array is 1, then an underscore is printed
 print_:		
 	printString("_ ")
-	addi $s5, $s5, 4
+	addi $s5, $s5, 4			#adds 4 to $s5 (to move to the next memory location containing a character value)
 	j generateWord
 
 #if value in array is 0, then the character from that spot is printed
 printChar:	
-	la $t3, wordToGuess
-	sub $t1, $s5, $s4
-	div  $t1, $t1, 4
-	add $a1, $t3, $t1
-	lb $a0, ($a1)
-	li $v0, 11
+	la $t3, wordToGuess			#Load the address of the wordToGuess variable into register $t3
+	sub $t1, $s5, $s4			#store byte offset in $t1
+	div  $t1, $t1, 4			#Divide the byte offset by 4 (since each array element is 4 bytes long)
+	add $a1, $t3, $t1			#Add the word address $t3 to the byte offset $t1 to get the address of the current array element
+	lb $a0, ($a1)				#Load the byte at the memory address pointed to by $a1 into register $a0
+	li $v0, 11				#Load the system call code for printing a character into register $v0
 	syscall
 
-	addi $s5, $s5, 4
+	addi $s5, $s5, 4			#Increment the index $s5 by 4 (since each array element is 4 bytes long)
 	printString(" ")
-	j generateWord
+	j generateWord				#Jump back to the generateWord label to print the next character or underscore
 
 addToStack:
-	lw $s1, wordLength
-	addi $s1, $s1, 1
-	sw $s1, wordLength
-	add $sp, $sp, 4	#add 1 onto the stack
-	sw $s3, ($sp)
+	lw $s1, wordLength			#Load the value of wordLength into register $s1
+	addi $s1, $s1, 1			#Add 1 to wordLength and store the result back in $s1
+	sw $s1, wordLength			#Store the updated wordLength value back in memory
+	add $sp, $sp, 4				#Add 4 bytes to the stack pointer $sp to allocate space for a new value on the stack
+	sw $s3, ($sp)				#Store the value of $s3 (the current letter guess) onto the top of the stack
 	jr $ra
-####################################################################### FAIL/SUCCESS/SOUND ##############################################################################
+######################################################## END LOAD CHARS OF WORD TO GUESS ONTO STACK #####################################################################
 #																					#
 ################################################################# START FAIL/SUCCESS/SOUND ##############################################################################
 #reached from end of main loop
@@ -444,14 +451,6 @@ soundGood:
 
 	jr $ra
 
-#####
-# addGuess(char)
-#
-# Adds a guess.
-# Arg: $a0 - the character guessed
-# Ret: $v0 - contained ? 1 : 0
-#####
-
 ################################################################# END FAIL/SUCCESS/SOUND ################################################################################
 #																					#
 ######################################################## START UPDATING GUESSED LETTERS ARRAY/STACK #####################################################################
@@ -459,53 +458,51 @@ soundGood:
 #loads space constant, int 0, and the address of array 'guessedLetters'
 addGuess:
 	# Load our constants
-	li $t0, ' '
-	li $t1, 0
-	la $t2, guessedLetters
+	li $t0, ' '     		# Load ASCII space character into $t0
+	li $t1, 0       		# Load integer 0 into $t1
+	la $t2, guessedLetters  	# Load address of the array 'guessedLetters' into $t2
 
 #loop that iterates through each character of 'guessedLetters"
 addGuessLoop:
-	subi $sp, $sp, 20
-	sw $t0, 0($sp)
-	sw $t1, 4($sp)
-	sw $t2, 8($sp)
-	sw $t3, 12($sp)
-	sw $t4, 16($sp)
-	addi $sp, $sp, 20
-
+	subi $sp, $sp, 20  		# Reserve space on the stack by subtracting 20 from the stack pointer
+	sw $t0, 0($sp)     		# Store the space character in the current stack frame
+	sw $t1, 4($sp)     		# Store the integer 0 in the current stack frame
+	sw $t2, 8($sp)     		# Store the address of 'guessedLetters' in the current stack frame
+	sw $t3, 12($sp)    		# Store $t3 in the current stack frame
+	sw $t4, 16($sp)    		# Store $t4 in the current stack frame
+	addi $sp, $sp, 20  		# Increment the stack pointer by 20 to move to the next stack frame
+	
 	# checks if first char in array is space
-	add $t3, $t1, $t2
-	lbu $t4, ($t3)
-	beq $t0, $t4, doAddGuess	#if space--> reached end of array--> jump to doAddGuess
+	add $t3, $t1, $t2   		# Compute the address of the current character to check
+	lbu $t4, ($t3)      		# Load the current character into $t4
+	beq $t0, $t4, doAddGuess  	# If the current character is a space, jump to the 'doAddGuess' label
 
-	# Return false if exists
-	beq $a0, $t4, cantAddGuess
+	beq $a0, $t4, cantAddGuess  	# If the character to add already exists in the array, jump to 'cantAddGuess' label
 
-	# Increment by 1
-	addi $t1, $t1, 1
-	j addGuessLoop
+	addi $t1, $t1, 1   		# Increment the index to check the next character in 'guessedLetters'
+	j addGuessLoop      		# Jump to the beginning of the loop to check the next character
 
 #adds the guessed letter to the array
 doAddGuess:
-	sb $a0, ($t3)
-	li $v0, 1
-	j endAddGuess
+	sb $a0, ($t3)      		# Store the character to add in the current location in the array
+	li $v0, 1           		# Load 1 into $v0 to indicate success
+	j endAddGuess       		# Jump to 'endAddGuess' to clean up the stack and return
 
 cantAddGuess:
-	li $v0, 0
-	j endAddGuess
+	li $v0, 0           		# Load 0 into $v0 to indicate failure
+	j endAddGuess       		# Jump to 'endAddGuess' to clean up the stack and return
 
 #cleans up stack and stores all chars in array
 endAddGuess:
-	subi $sp, $sp, 20
-	lw $t0, 0($sp)
-	lw $t1, 4($sp)
-	lw $t2, 8($sp)
-	lw $t3, 12($sp)
-	lw $t4, 16($sp)
-	addi $sp, $sp, 20
-
-	jr $ra
+	subi $sp, $sp, 20   		# Decrement the stack pointer by 20 to move back to the previous stack frame
+	lw $t0, 0($sp)      		# Load $t0 from the previous stack frame
+	lw $t1, 4($sp)      		# Load $t1 from the previous stack frame
+	lw $t2, 8($sp)      		# Load $t2 from the previous stack frame
+	lw $t3, 12($sp)     		# Load $t3 from the previous stack frame
+	lw $t4, 16($sp)     		# Load $t4 from the previous stack frame
+	addi $sp, $sp, 20   		# Increment the stack pointer by 20 to move back to the caller's stack frame
+	
+	jr $ra              		# Return to the caller
 ################################################################# END UPDATING GUESSED LETTERS ARRAY ####################################################################
 #																					#
 ######################################################################### EXIT PROGRAM ##################################################################################
