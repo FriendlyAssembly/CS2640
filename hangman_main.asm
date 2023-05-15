@@ -7,11 +7,11 @@
 
 #macro that prints out specified text
 .macro 	printString (%str)  
-.data
-string:	.asciiz %str
-numIncorrectGuesses: .word 0
+	.data
+	string:	.asciiz %str
+	numIncorrectGuesses: .word 0
 
-.text
+	.text
 	li $v0, 4
 	la $a0, string
 	syscall
