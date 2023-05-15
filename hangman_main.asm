@@ -47,7 +47,7 @@ printImage:	#prints out hangman image for user display
 		printString("          |     |		\n")
 
 	#Prints different parts of image based on # of incorrect guesses
-	##################################
+	#################################### ^o.o^ ############################################
 		lw $a0, numIncorrectGuesses
 		# 0 incorrect guesses
 		beq $a0, 1, g1
@@ -110,7 +110,7 @@ printImage:	#prints out hangman image for user display
 	bottom:
 		printString("\n")
 
-	#################################
+	#################################### ^o.o^ ############################################
 
 .end_macro
 
@@ -508,7 +508,7 @@ endAddGuess:
 	jr $ra              		# Return to the caller
 ################################################################# END UPDATING GUESSED LETTERS ARRAY ####################################################################
 #																					#
-######################################################################### EXIT PROGRAM ##################################################################################
+######################################################################### EXIT PROGRAM ^o.o^ ############################################################################
 exit:	
 	#prints out the correctAnswer prompt
 	printPrompt(correctAnswer)
