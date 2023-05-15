@@ -35,7 +35,10 @@ buffer: .space 10000
 
 .text
 #################################################################################################################################################################
-#																				#
+#Summary:																			#
+#	-print out hangcat image in a macro 															#
+#	-image is updated with each incorrect guess made 													#
+#																				#												#								#																				#																				#
 ############################################################### BEGIN HANGCAT IMAGE PRINTING ####################################################################
 printImage:	#prints out hangman image for user display 
 .macro print_img
@@ -115,14 +118,19 @@ printImage:	#prints out hangman image for user display
 .end_macro
 
 #################################################################### END HANGCAT IMAGE PRINTING #########################################################################
-#																					#
+#Summary																				#
+#	-displays welcome prompt																	#
+#																					#																																					#
 ####################################################################### WELCOME PROMPT ##################################################################################
 welcome:
 	printPrompt(totoro)
 	printPrompt(welcomePrompt)
 	
 ####################################################################### END WELCOME PROMPT ##############################################################################
-#																					#
+#Summary																				#
+#	- dictionary method opens, reads, and closes the dictionary.txt file												#
+#	- the rest of the method work together to find each new word by identifying if there is a new line or carriage return character					#
+#																					#																				
 ################################################################## BEGIN DICTIONARY OPERATIONS ##########################################################################
 
 #open/reads/closes data from dictionary.txt files 
@@ -182,11 +190,13 @@ newWordFound:
 	printString("\n")
 
 	addi $t0, $t0, 1
-	printPrompt(wordToGuess)	#print wordToGuess for debugging purposes
+	#printPrompt(wordToGuess)	#print wordToGuess for debugging purposes
 
-#################################################################### END DICTIONARY OPERATIONS ############################################################################
-#																					  #
-#################################################################### BEGIN MAIN GAME PROCEDURE ############################################################################
+#################################################################### END DICTIONARY OPERATIONS ##########################################################################
+#Summary:																				#
+#	- main initializes a stack that will be used later for the chars in the word to guess and loads the base address of wordToGuess					#
+#																					#
+#################################################################### BEGIN MAIN GAME PROCEDURE ##########################################################################
 
 #initialize stack 
 main:
@@ -201,22 +211,12 @@ main:
 					#so that it can be used later in the code to detect whether 
 					#the string length has been properly initialized
 
-	#list of registers: $s0 = 2, $s1 = nothing, $s2 = null, $s3 = 1, $s4 = $sp, $s5 = $sp (used to move up and down array), $s6 used in generateWord can be used in other things, $s7 = used to store imported char
-	#		    $t0 = address of wordToGuess, $t1 = used in printChar, $t2 = used in checkForMatch
-	#stack is used for the array - should that be changed?
-
-#	li $v0, 4
-#	la $a0, stringInput
-#	syscall		#prompt user for input
-#	li $v0, 8
-#	la $a0, wordToGuess
-#	li $a1, 256
-#	syscall #loads a string into memory at string's address (max 256 chars)
-
 	la $t0, wordToGuess		#sets up the stack by looping through each character in the string variable wordToGuess 
 	li $t7, ' '
 
 ###########################################################################################################################################################################
+#Summary:																				  #
+#	-stackSetup actually adds each char in wordToGuess onto the stack using the addToStack method									  #									
 #																					  #
 ################################################################## BEGIN BEGIN INITIALIZING STACK #########################################################################
 
@@ -246,6 +246,7 @@ loop:
 
 	# Print letters already guessed
 	printString("Guessed letters: ")
+	printPrompt(guessedLetters)
 
 	add $s5, $s4, $zero		#set $s5 to beginning of array 
 
@@ -277,7 +278,7 @@ loop:
 	beq $v0, 1, loop2 			# Continue if the add was valid
 
 	# Otherwise, error
-	printString("Letter already guessed.\n")
+	printString(" Letter already guessed.\n")
 	j loop
 
 loop2:
