@@ -258,7 +258,7 @@ incorrectGuess:
 	j startGuess
 	
 correctGuess:
-	$print correct message
+	#print correct message
 	li $v0, 4
 	la $a0, correctMessage
 	syscall
