@@ -101,6 +101,7 @@ chooseWord:
 	move $t6, $zero
 	
 	#initialize #t7 as correct guess counter
+	move $t7, $zero
 
 #initially prints empty hangman
 initialGuess:	
@@ -261,6 +262,8 @@ correctGuess:
 	li $v0, 4
 	la $a0, correctMessage
 	syscall
+
+	addi $t7, $t7, 1
 	
 	#if counter is equal to 7, player wins
 	beq $t7, 7, win	
