@@ -6,11 +6,15 @@ Hook: Hello, guys! We are FriendlyAssembly. this MIPS CODE is intended to implem
 The game prompts the user for letter inputs and draws a hangman image with each incorrect guess. 
 After reaching six incorrect guesses, the game ends. let’s walk through what we have done.
 
-1. Data section: in the data section, we have a large number of data managed. 
+Here is the presentation that includes the most important parts of the code. let's break down.
+
+1. Data section: in the data section, we have a large number of data defined. 
 These are going to be used throughout the game for welcome and question messages, Ascii art, and the words that the player has to guess.
 
-2. Main function : The main function starts by printing a welcome message and asking the user to start a new game, which is handled by user’s input (‘Y’ or ’N’).
-Otherwise (If the input is invalid), it will print error message and jump back to ‘main’
+2. Main function : The main function starts by printing a welcome message and asking the user to start a new game, 
+which is handled by user’s input (‘Y’ for yes or ’N’ for no).
+Otherwise (If the input is invalid), it will jump to the 'invalidInput' label and print error message.
+Then jump back to ‘main’
 
 Person 2 :
 
