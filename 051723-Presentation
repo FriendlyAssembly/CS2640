@@ -9,8 +9,8 @@ After reaching six incorrect guesses, the game ends. let’s walk through what w
 1. Data section: in the data section, we have a large number of data managed. 
 These are going to be used throughout the game for welcome and question messages, Ascii art, and the words that the player has to guess.
 
-2. Main function : The main function starts by printing a welcome message, as you see, and asking the user to start a new game, which is handled by user’s input (‘Y’ or ’N’).
-otherwise, it will print error message and jump back to ‘main’
+2. Main function : The main function starts by printing a welcome message and asking the user to start a new game, which is handled by user’s input (‘Y’ or ’N’).
+Otherwise (If the input is invalid), it will print error message and jump back to ‘main’
 
 Person 2 :
 
