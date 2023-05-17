@@ -2,7 +2,7 @@
 	# Jarisse Escubido
 	# Moller Myint
 	# Dayoung Kim
-	# Vanisa Sudprathon
+	# Vanisa Suadprathon
 # Due Date: 05/14/2023
 # Objective: Create a simple MIPS Hangman Game
 
