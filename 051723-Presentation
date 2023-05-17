@@ -18,7 +18,7 @@ Person 2 :
 (The word is selected but no code for randomization)
 
 4. Guessing : the ‘startGuess’ label prompts the user for acutal letter guess. then, enters a loop where it checks each letter of the chosen word against guessed letter. 
-if a match is foune, them jumps to the ‘foundletter’ label, where it prints the letter and sets a flag showing a correct guess. 
+if a match is found, them jumps to the ‘foundletter’ label, where it prints the letter and sets a flag showing a correct guess. 
 if it reachs the end of the letter, then checks the flag and jumps to either correct or incorrectGuess label.
 
 Person 3 :
