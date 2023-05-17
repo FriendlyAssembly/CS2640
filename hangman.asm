@@ -1,4 +1,8 @@
-# Jarisse Escubido: CS2640
+# AssemblyFriendly: CS2640
+	# Jarisse Escubido
+	# Moller Myint
+	# Dayoung Kim
+	# Vanisa Sudprathon
 # Due Date: 05/14/2023
 # Objective: Create a simple MIPS Hangman Game
 
@@ -97,7 +101,9 @@ chooseWord:
 	move $t6, $zero
 	
 	#initialize #t7 as correct guess counter
-initialGuess:
+
+#initially prints empty hangman
+initialGuess:	
 	li $v0, 4
 	la $a0, top
 	syscall
@@ -108,6 +114,7 @@ initialGuess:
 	
 	j startGuess
 	
+#prints hangman with head
 oneIncorrect:
 	li $v0, 4
 	la $a0, top
@@ -119,6 +126,7 @@ oneIncorrect:
 	
 	j startGuess
 	
+#prints hangman with head and body
 twoIncorrect:
 	li $v0, 4
 	la $a0, top
@@ -130,6 +138,7 @@ twoIncorrect:
 	
 	j startGuess
 
+#prints hangman with head, body, left arm
 threeIncorrect:
 	li $v0, 4
 	la $a0, top
@@ -141,6 +150,7 @@ threeIncorrect:
 	
 	j startGuess
 	
+#prints hangman with head, body, left arm, right arm
 fourIncorrect:
 	li $v0, 4
 	la $a0, top
@@ -151,6 +161,8 @@ fourIncorrect:
 	syscall
 	
 	j startGuess
+
+#prints hangman with head, body, left arm, right arm, left foot
 fiveIncorrect:
 	li $v0, 4
 	la $a0, top
@@ -161,6 +173,9 @@ fiveIncorrect:
 	syscall
 	
 	j startGuess
+
+#prints hangman with head, body, left arm, right arm, left foot, right foot
+#prints completed hangman
 sixIncorrect:
 	li $v0, 4
 	la $a0, top
@@ -172,6 +187,7 @@ sixIncorrect:
 	
 	j lose
 	
+#prompts user to enter a character
 startGuess:
 	#print guess prompt
 	li $v0, 4
@@ -187,6 +203,7 @@ startGuess:
 	la $a0, newline
 	syscall
 	
+#prints out the word masked as asterisk and will update as user guesses correct character
 loop:
 	lb $t3, ($t0)	#load single character from selected word into $t3
 		
@@ -203,6 +220,8 @@ loop:
 	
 	j loop 
 	
+#when characters are the same, will be flagged and have asterisk replaced with character
+#issues with asterisk updating
 foundLetter:
 	# if the current character is equal to the guessed letter, print the letter
 	li $v0, 11            	# syscall code for printing a character
@@ -213,37 +232,43 @@ foundLetter:
 	addi $t1, $t1, 1      	# increment the counter to keep track of the current character index
 	li $t2, 1             	# set the flag to indicate that the guessed letter was found
 	j loop                	# jump back to the beginning of the loop
-	
+
+#determines if the character is the same or not and moves to corresponding label.
 done:
 	beq $t2, $zero, incorrectGuess  	# if the flag is 0, the guessed letter was not found, jump to the "lose" label
 	beq $t2, 1, correctGuess		#if flag is 1, prompt user to "win" label
 	
 incorrectGuess:
+	#display incorrect message
 	li $v0, 4
 	la $a0, incorrectMessage
 	syscall
 	
+	#increments incorrect guesses
 	addi $t6, $t6, 1
 	
-	beq $t6, 1, oneIncorrect
-	beq $t6, 2, twoIncorrect
-	beq $t6, 3, threeIncorrect
-	beq $t6, 4, fourIncorrect
-	beq $t6, 5, fiveIncorrect
-	beq $t6, 6, sixIncorrect
+	beq $t6, 1, oneIncorrect	# branch to print head if equal to 1
+	beq $t6, 2, twoIncorrect	# branch to print head and body if equal to 2
+	beq $t6, 3, threeIncorrect	# branch to print head, body, left arm if equal to 3
+	beq $t6, 4, fourIncorrect	# branch to print head, body, left arm, right arm if equal to 4
+	beq $t6, 5, fiveIncorrect	# branch to print head, body, left arm, right arm, left foot if equal to 5
+	beq $t6, 6, sixIncorrect	# branch to print head, body, left arm, right arm, left foot, right foot if equal to 6
 	
 	j startGuess
 	
 correctGuess:
+	$print correct message
 	li $v0, 4
 	la $a0, correctMessage
 	syscall
 	
-	beq $t7, 7, win
+	#if counter is equal to 7, player wins
+	beq $t7, 7, win	
 	
 	j startGuess
 	
 lose:
+	#print lose message
 	li $v0, 4
 	la $a0, loseMessage
 	syscall
@@ -251,11 +276,13 @@ lose:
 	j exit
 	
 win:
+	#print win message
 	li $v0, 4
 	la $a0, winMessage
 	syscall
 	
-	j exit
+	#jump to exit label
+	j exit 
 	
 exit:
 	#print mini robots
