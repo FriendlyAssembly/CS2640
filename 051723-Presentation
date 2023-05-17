@@ -1,0 +1,44 @@
+# 5/17/2023 Presentation
+
+Person 1 :
+
+Hook: Hello, guys! We are FriendlyAssembly. this MIPS CODE is intended to implement a basic Hangman game. 
+The game prompts the user for letter inputs and draws a hangman image with each incorrect guess. 
+After reaching six incorrect guesses, the game ends. In fact, we were actually unable to implement this game properly. However, let’s walk through what we have done.
+
+1. Data section: in the data section, we have a large number of data managed. 
+These are going to be used throughout the game for welcome and question messages, Ascii art, and the words that the player has to guess.
+
+2. Main function : The main function starts by printing a welcome message, as you see, and asking the user to start a new game, which is handled by user’s input (‘Y’ or ’N’).
+otherwise, it will print error message and jump back to ‘main’
+
+Person 2 :
+
+3. Selecting word : If the user chooses to start a game, the ‘chooseWord’ label is used to select a word from an array of words for the player to guess. 
+(The word is selected but no code for randomization)
+
+4. Guessing : the ‘startGuess’ label prompts the user for acutal letter guess. then, enters a loop where it checks each letter of the chosen word against guessed letter. 
+if a match is foune, them jumps to the ‘foundletter’ label, where it prints the letter and sets a flag showing a correct guess. 
+if it reachs the end of the letter, then checks the flag and jumps to either correct or incorrectGuess label.
+
+Person 3 :
+
+5. Incorrect guess handling: The incorrectGuess label prints an "incorrect" message and increments a counter for incorrect guesses. 
+then, checks the counter and jumps to a different label for each possible number of incorrect guesses (from 1 to 6), which draws a gradully hangman figure. 
+After 6 incorrect guesses, the game ends with losing message.
+
+6. Correct guess handling: The correctGuess label prints a "correct" message and then jumps back to startGuess to prompt for another letter. 
+(Optional comment / you can say it later) : this counter is never incremented, so the game can't be won in its current state.
+
+Person 4 : 
+
+7. End of game: The win and lose labels print appropriate messages and then jump to the exit label, which prints an exit message and then ends the program.
+
+8. The issues we faced:
+
+- The ‘chooseWord’ function doesn’t implement any randomization, so it will always choose the same word. (right?)
+- There is no code of increments of the correct guess counters, so the user can never win this game.-
+- There is no code that displays the current state of the word being entered. 
+- It doesn’t handle the case where the user guesses the same letter that was already used previously. since this one will be also counted as incorrect guess.
+
+Thank you for your listening!
